@@ -131,6 +131,8 @@ export class Nextjs extends Construct {
   constructor(scope: Construct, id: string, protected props: NextjsProps) {
     super(scope, id);
 
+    this.validateProps(props);
+
     // build nextjs app
     this.nextBuild = new NextjsBuild(this, id, { ...props, tempBuildDir: this.tempBuildDir });
 
@@ -195,5 +197,13 @@ export class Nextjs extends Construct {
    */
   public get bucket(): s3.IBucket {
     return this.staticAssets.bucket;
+  }
+
+  private validateProps(props: NextjsProps) {
+    if (props.distribution && props.defaults?.distribution) {
+      throw new Error(
+        'distribution and defaults.distribution were passed as props to Nextjs. defaults.distribution will have no affect. Please removed.'
+      );
+    }
   }
 }
